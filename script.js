@@ -48,7 +48,7 @@ let funcionarios = [];
 let editando = false;
 let editIndex = null;
 
-document.getElementById("funcionarioForm").addEventListener("submit", function (e) {
+document.getElementById("funcionarioForm").addEventListener("submit", (e) => {
     e.preventDefault();
 
     const nome = document.getElementById("nome").value;
@@ -56,7 +56,7 @@ document.getElementById("funcionarioForm").addEventListener("submit", function (
     const cargo = document.getElementById("cargo").value;
     const salario = parseFloat(document.getElementById("salario").value);
 
-    if(editando) {
+    if (editando) {
         funcionarios[editIndex].nome = nome;
         funcionarios[editIndex].idade = idade;
         funcionarios[editIndex].cargo = cargo;
@@ -74,7 +74,7 @@ document.getElementById("funcionarioForm").addEventListener("submit", function (
 });
 
 const renderTable = () => {
-    const tbody = document.querySelector("#funcionariosTable tbody"); 
+    const tbody = document.querySelector("#funcionariosTable tbody");
     tbody.innerHTML = "";
     funcionarios.forEach((funcionario, index) => {
         const row = document.createElement("tr");
@@ -84,11 +84,23 @@ const renderTable = () => {
             <td>${funcionario.cargo}</td>
             <td>R$ ${funcionario.salario.toFixed(2)}</td>
             <td>
-                <button onclick="(() => editarFuncionario(${index}))()">Editar</button>
-                <button onclick="(() => excluirFuncionario(${index}))()">Excluir</button>
+                <button class="edit-btn">Editar</button>
+                <button class="delete-btn">Excluir</button>
             </td>
         `;
         tbody.appendChild(row);
+
+        // Adicionar eventos aos botões com funções anônimas
+        const editBtn = row.querySelector(".edit-btn");
+        const deleteBtn = row.querySelector(".delete-btn");
+
+        editBtn.addEventListener("click", function () {
+            editarFuncionario(index);
+        });
+
+        deleteBtn.addEventListener("click", function () {
+            excluirFuncionario(index);
+        });
     });
 };
 
@@ -106,6 +118,6 @@ const editarFuncionario = (index) => {
 const excluirFuncionario = (index) => {
     if (confirm("Deseja realmente excluir este funcionário?")) {
         funcionarios.splice(index, 1);
-        renderTable(); 
+        renderTable();
     }
 };
