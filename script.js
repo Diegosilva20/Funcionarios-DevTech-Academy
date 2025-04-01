@@ -45,35 +45,67 @@ class Funcionario {
     
 
 let funcionarios = [];
+let editando = false;
+let editIndex = null;
 
 document.getElementById("funcionarioForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
     const nome = document.getElementById("nome").value;
-    const idade = document.getElementById("idade").value;
+    const idade = parseInt(document.getElementById("idade").value);
     const cargo = document.getElementById("cargo").value;
-    const salario = document.getElementById("salario").value;
+    const salario = parseFloat(document.getElementById("salario").value);
 
-    const funcionario = new Funcionario(nome, idade, cargo, salario);
-
-    funcionarios.push(funcionario);
+    if(editando) {
+        funcionarios[editIndex].nome = nome;
+        funcionarios[editIndex].idade = idade;
+        funcionarios[editIndex].cargo = cargo;
+        funcionarios[editIndex].salario = salario;
+        editando = false;
+        editIndex = null;
+        document.querySelector("#funcionarioForm button").textContent = "Cadastrar";
+    } else {
+        const funcionario = new Funcionario(nome, idade, cargo, salario);
+        funcionarios.push(funcionario);
+    }
 
     renderTable();
-
     this.reset();
 });
 
 const renderTable = () => {
-    const tbody = document.querySelector("#funcionariosTable tbody");
-    tbody.innerHTML = ""; // Limpar a tabela
-    funcionarios.forEach(funcionario => {
+    const tbody = document.querySelector("#funcionariosTable tbody"); 
+    tbody.innerHTML = "";
+    funcionarios.forEach((funcionario, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${funcionario.nome}</td>
             <td>${funcionario.idade}</td>
             <td>${funcionario.cargo}</td>
-            <td>${funcionario.salario}</td>
+            <td>R$ ${funcionario.salario.toFixed(2)}</td>
+            <td>
+                <button onclick="(() => editarFuncionario(${index}))()">Editar</button>
+                <button onclick="(() => excluirFuncionario(${index}))()">Excluir</button>
+            </td>
         `;
         tbody.appendChild(row);
     });
+};
+
+const editarFuncionario = (index) => {
+    const funcionario = funcionarios[index];
+    document.getElementById("nome").value = funcionario.nome;
+    document.getElementById("idade").value = funcionario.idade;
+    document.getElementById("cargo").value = funcionario.cargo;
+    document.getElementById("salario").value = funcionario.salario;
+    editando = true;
+    editIndex = index;
+    document.querySelector("#funcionarioForm button").textContent = "Salvar";
+};
+
+const excluirFuncionario = (index) => {
+    if (confirm("Deseja realmente excluir este funcionário?")) {
+        funcionarios.splice(index, 1);
+        renderTable(); 
+    }
 };
