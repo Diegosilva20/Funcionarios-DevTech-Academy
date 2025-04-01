@@ -121,3 +121,53 @@ const excluirFuncionario = (index) => {
         renderTable();
     }
 };
+
+const exibirRelatorio = (titulo, conteudo) => {
+    const output = document.getElementById("relatoriosOutput");
+    output.innerHTML = `<h3>${titulo}</h3><p>${conteudo}</p>`;
+};
+
+const listarSalariosAltos = () => {
+    const salariosAltos = funcionarios.filter(funcionario => funcionario.salario > 5000);
+    if (salariosAltos.length === 0) {
+        exibirRelatorio("Funcionários com Salário > R$ 5000", "Nenhum funcionário com salário acima de R$ 5000 encontrado.");
+    } else {
+        const lista = salariosAltos.map(funcionario => funcionario.toString()).join("<br>");
+        exibirRelatorio("Funcionários com Salário > R$ 5000", lista);
+    }
+};
+
+const calcularMediaSalarial = () => {
+    if (funcionarios.length === 0) {
+        exibirRelatorio("Média Salarial", "Nenhum funcionário cadastrado.");
+        return;
+    }
+    const somaSalarios = funcionarios.reduce((soma, funcionario) => soma + funcionario.salario, 0);
+    const media = (somaSalarios / funcionarios.length).toFixed(2);
+    const expressaoSoma = funcionarios.map(funcionario => funcionario.salario.toFixed(2)).join(" + ");
+    const expressaoCompleta = `(${expressaoSoma}) / ${funcionarios.length} = R$ ${media}`;
+    exibirRelatorio("Média Salarial", expressaoCompleta);
+};
+
+const listarCargosUnicos = () => {
+    if (funcionarios.length === 0) {
+        exibirRelatorio("Cargos Únicos", "Nenhum funcionário cadastrado.");
+        return;
+    }
+    const cargosUnicos = [...new Set(funcionarios.map(funcionario => funcionario.cargo))];
+    exibirRelatorio("Cargos Únicos", cargosUnicos.join("<br>"));
+};
+
+const listarNomesMaiusculo = () => {
+    if (funcionarios.length === 0) {
+        exibirRelatorio("Nomes em Maiúsculo", "Nenhum funcionário cadastrado.");
+        return;
+    }
+    const nomesMaiusculo = funcionarios.map(funcionario => funcionario.nome.toUpperCase());
+    exibirRelatorio("Nomes em Maiúsculo", nomesMaiusculo.join("<br>"));
+};
+
+document.getElementById("listarSalariosAltos").addEventListener("click", listarSalariosAltos);
+document.getElementById("mediaSalarial").addEventListener("click", calcularMediaSalarial);
+document.getElementById("cargosUnicos").addEventListener("click", listarCargosUnicos);
+document.getElementById("nomesMaiusculo").addEventListener("click", listarNomesMaiusculo);
